@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // haskitod usage template
@@ -41,11 +42,14 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 var HaskitodCmd = &cobra.Command{
 	Use:   "haskitod",
 	Short: "Haskitod is a command line daemon for haskito core (a.k.a haskitod)",
-	Run: func(cmd *cobra.Command, args []string) {
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		err := viper.Unmarshal(config)
 		if len(args) < 1 {
 			cmd.SetUsageTemplate(usageTemplate)
 			cmd.Usage()
 		}
+		config.SetRoot(config.RootDir)
+		return nil
 	},
 }
 
